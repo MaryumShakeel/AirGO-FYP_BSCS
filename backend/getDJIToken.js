@@ -13,7 +13,7 @@ const CLIENT_SECRET = "PJ7sXPfudrJwE0QxA7c36zFLqXQF3uUpUN4zLOupYfFUYgFODvBTRu3jf
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
       },
-      { headers: { "Content-Type": "application/json" }, timeout: 10000 }
+      { headers: { "Content-Type": "application/json" }, timeout: 30000 }
     );
 
     console.log("✅ Token received successfully!");

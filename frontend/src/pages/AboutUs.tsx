@@ -65,9 +65,16 @@ const AboutUs: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-amber-500 text-black text-center py-4 font-medium">
-        © {new Date().getFullYear()} AirGO. All rights reserved.
-      </footer>
+<footer className="bg-amber-500 text-black text-center py-6 font-medium">
+  <div className="space-x-4 mb-2">
+    <a href="/privacy-policy" className="hover:underline">Privacy Policy</a> |
+    <a href="/refund-policy" className="hover:underline">Return & Refund Policy</a> |
+    <a href="/service-policy">Service Policy</a> |
+    <a href="/terms" className="hover:underline">Terms & Conditions</a>
+  </div>
+  © {new Date().getFullYear()} AirGO. All rights reserved.
+</footer>
+
     </div>
   );
 };

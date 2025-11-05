@@ -355,50 +355,60 @@ export default function DashboardPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-r from-amber-600 to-yellow-500 text-white py-16">
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-4 gap-10">
-          <div>
-            <h3 className="text-3xl font-bold mb-4">
-              <span className="text-white">Air</span>
-              <span className="text-yellow-200">GO</span>
-            </h3>
-            <p className="text-yellow-100 leading-relaxed">
-              Redefining drone rentals with innovation and reliability. The future of aerial delivery is here.
-            </p>
-          </div>
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Navigation</h4>
-            <ul className="space-y-2 text-yellow-100">
-              <li>
-                <a href="#specs" className="hover:text-white">Specifications</a>
-              </li>
-              <li>
-                <a href="#contact" className="hover:text-white">Contact</a>
-              </li>
-              <li>
-                <a href="#about" className="hover:text-white">About</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Our Services</h4>
-            <ul className="space-y-2 text-yellow-100">
-              <li>Drone Rentals</li>
-              <li>Tracking</li>
-              <li>24/7 Support</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
-            <p>📧 mail@airgo.com</p>
-            <p>📞 +92 300 1234567</p>
-            <p>📍 Rawalpindi, Islamabad</p>
-          </div>
-        </div>
-        <div className="text-center mt-10 text-yellow-100 border-t border-yellow-400 pt-6">
-          © 2025 AirGO. All rights reserved.
-        </div>
-      </footer>
+<footer className="bg-gradient-to-r from-amber-600 to-yellow-500 text-white py-16">
+  <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-4 gap-10">
+    {/* Brand */}
+    <div>
+      <h3 className="text-3xl font-bold mb-4">
+        <span className="text-white">Air</span>
+        <span className="text-yellow-200">GO</span>
+      </h3>
+      <p className="text-yellow-100 leading-relaxed">
+        Redefining drone rentals with innovation and reliability. The future of aerial delivery is here.
+      </p>
+    </div>
+
+    {/* Navigation */}
+    <div>
+      <h4 className="text-lg font-semibold mb-4">Navigation</h4>
+      <ul className="space-y-2 text-yellow-100">
+        <li><a href="#specs" className="hover:text-white">Specifications</a></li>
+        <li><a href="#contact" className="hover:text-white">Contact</a></li>
+        <li><a href="#about" className="hover:text-white">About</a></li>
+      </ul>
+    </div>
+
+    {/* Services */}
+    <div>
+      <h4 className="text-lg font-semibold mb-4">Our Services</h4>
+      <ul className="space-y-2 text-yellow-100">
+        <li>Drone Rentals</li>
+        <li>Tracking</li>
+        <li>24/7 Support</li>
+      </ul>
+    </div>
+
+    {/* Contact */}
+    <div>
+      <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
+      <p>📧 tabinda.hassan12@gmail.com</p>
+      <p>📞 +92 312 5969159</p>
+      <p>📍 Islamabad</p>
+    </div>
+  </div>
+
+  {/* Bottom */}
+  <div className="text-center mt-10 text-yellow-100 border-t border-yellow-400 pt-6">
+    <div className="space-x-4 mb-2">
+      <a href="/privacy-policy" className="hover:text-white text-sm">Privacy Policy</a> |
+      <a href="/refund-policy" className="hover:text-white text-sm">Return & Refund Policy</a> |
+      <a href="/service-policy">Service Policy</a>|
+      <a href="/terms" className="hover:text-white text-sm">Terms & Conditions</a>
+    </div>
+    © {new Date().getFullYear()} AirGO. All rights reserved.
+  </div>
+</footer>
+
     </div>
   );
 }

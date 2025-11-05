@@ -12,6 +12,8 @@ import droneOrderRoutes from "./routes/droneOrderRoutes.js"; // new Drone Order 
 import droneRoutes from "./routes/droneRoutes.js";
 import droneControlRoutes from "./routes/droneControlRoutes.js";
 import djiRoutes from "./routes/djiRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
+
 
 
 
@@ -29,6 +31,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/drone", droneRoutes);
 app.use("/api/drone-control", droneControlRoutes);
 app.use("/api/dji", djiRoutes);
+app.use("/api/payments", paymentRoutes);
+
 
 
 // ✅ Connect to MongoDB

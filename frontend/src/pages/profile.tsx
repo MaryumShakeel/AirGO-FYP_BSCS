@@ -262,12 +262,13 @@ const Profile: React.FC = () => {
             Change Password
           </button>
 
+          {/*
           <button
             onClick={() => navigate("/enable-2fa")}
             className="block text-left w-full text-gray-800 hover:text-amber-600"
           >
             Enable 2FA (Two-Factor Authentication)
-          </button>
+          </button> */}
 
           {/*
           <button

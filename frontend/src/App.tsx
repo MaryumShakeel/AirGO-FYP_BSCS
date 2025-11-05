@@ -7,16 +7,18 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import Profile from "./pages/profile";
 import ChangePassword from "./pages/ChangePassword";
-import Enable2FA from "./pages/Enable2FA";
-//import NotificationPreferences from "./pages/NotificationPreferences";
 
 import DroneHiring from "./pages/DroneHiring";
 import OrderConfirmed from "./pages/OrderConfirmed";
 import LiveTracking from "./pages/LiveTracking";
 
-// ✅ Newly added pages
 import AboutUs from "./pages/AboutUs";
 import OurServices from "./pages/OurServices";
+
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import ServicePolicy from "./pages/ServicePolicy";
 
 function App() {
   return (
@@ -32,8 +34,6 @@ function App() {
         {/* Profile & Settings */}
         <Route path="/profile" element={<Profile />} />
         <Route path="/change-password" element={<ChangePassword />} />
-        <Route path="/enable-2fa" element={<Enable2FA />} />
-       {/* <Route path="/notification-preferences" element={<NotificationPreferences />} />*/}
 
         {/* Drone-related Pages */}
         <Route path="/hire-drone" element={<DroneHiring />} />
@@ -43,7 +43,15 @@ function App() {
         {/* ✅ New Informational Pages */}
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/our-services" element={<OurServices />} />
+
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/refund-policy" element={<RefundPolicy />} />
+        <Route path="/terms" element={<TermsAndConditions />} />
+        <Route path="/service-policy" element={<ServicePolicy />} />
+
+
       </Routes>
+
     </Router>
   );
 }
