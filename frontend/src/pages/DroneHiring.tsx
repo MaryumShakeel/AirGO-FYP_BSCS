@@ -29,205 +29,40 @@ const CardPayment: React.FC<{
   amount: number;
   onSuccess: (receipt: any) => void;
 }> = ({ amount, onSuccess }) => {
-  // Payment UI state
-  const [method, setMethod] = useState<"card" | "jazzcash" | "easypaisa" | "bank">("card");
   const [billingName, setBillingName] = useState("");
   const [billingEmail, setBillingEmail] = useState("");
-  const [billingPhone, setBillingPhone] = useState("");
   const [cardNumber, setCardNumber] = useState("");
-  const [expiry, setExpiry] = useState(""); // MM/YY
+  const [expiry, setExpiry] = useState(""); 
   const [cvc, setCvc] = useState("");
   const [saveCard, setSaveCard] = useState(false);
   const [agree, setAgree] = useState(false);
-
   const [isPaying, setIsPaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Helpers
-  const onlyDigits = (s: string) => s.replace(/\D/g, "");
-  const formatCardNumber = (s: string) => {
-    const d = onlyDigits(s).slice(0, 16);
-    return d.replace(/(.{4})/g, "$1 ").trim();
-  };
-  const formatExpiry = (s: string) => {
-    const d = onlyDigits(s).slice(0, 4);
-    if (d.length >= 3) return `${d.slice(0, 2)}/${d.slice(2)}`;
-    if (d.length >= 1 && d.length <= 2) return d;
-    return d;
-  };
-
-  // Luhn algorithm for card validation
-  const luhnValid = (num: string) => {
-    const digits = onlyDigits(num);
-    let sum = 0;
-    let shouldDouble = false;
-    for (let i = digits.length - 1; i >= 0; i--) {
-      let d = parseInt(digits.charAt(i), 10);
-      if (shouldDouble) {
-        d = d * 2;
-        if (d > 9) d -= 9;
-      }
-      sum += d;
-      shouldDouble = !shouldDouble;
-    }
-    return digits.length >= 13 && sum % 10 === 0;
-  };
-
-  const isExpiryValid = (v: string) => {
-    if (!/^\d{2}\/\d{2}$/.test(v)) return false;
-    const [mm, yy] = v.split("/").map((x) => parseInt(x, 10));
-    if (mm < 1 || mm > 12) return false;
-    const now = new Date();
-    const fullYear = 2000 + yy;
-    const expiryDate = new Date(fullYear, mm - 1, 1);
-    // expire at end of month
-    expiryDate.setMonth(expiryDate.getMonth() + 1);
-    return expiryDate > now;
-  };
-
-  const isCvcValid = (c: string) => /^\d{3,4}$/.test(c);
-
-  // Validation per method
-  const validate = () => {
-    setError(null);
-    if (!billingName || !billingEmail) {
-      setError("Please enter billing name and email.");
-      return false;
-    }
-    if (method === "card") {
-      if (!luhnValid(cardNumber)) {
-        setError("Invalid card number.");
-        return false;
-      }
-      if (!isExpiryValid(expiry)) {
-        setError("Invalid expiry date.");
-        return false;
-      }
-      if (!isCvcValid(cvc)) {
-        setError("Invalid CVC.");
-        return false;
-      }
-    } else {
-      // Wallet / bank methods need phone
-      if (!billingPhone || billingPhone.length < 10) {
-        setError("Please enter a valid phone number for wallet/bank payments.");
-        return false;
-      }
-    }
+  const handlePay = () => {
     if (!agree) {
       setError("You must agree to our Terms & Policies before paying.");
-      return false;
+      return;
     }
-    return true;
-  };
-
-  // Simulated payment action.
-  // In real integration you'd redirect to PayFast or call your backend which calls PayFast.
-  const handlePay = async () => {
     setError(null);
-    if (!validate()) return;
-
     setIsPaying(true);
-    try {
-      // Build payload according to method
-      let payload: any = {
-        userId: localStorage.getItem("userId"),
-        amount,
-        method,
-        billingName,
-        billingEmail,
-      };
 
-      if (method === "card") {
-        payload.cardDetails = {
-          number: onlyDigits(cardNumber),
-          expiry,
-          cvc,
-          saveCard,
-        };
-      } else {
-        payload.wallet = {
-          provider: method === "jazzcash" ? "JazzCash" : method === "easypaisa" ? "Easypaisa" : "BankTransfer",
-          phone: billingPhone,
-        };
-      }
+    const receipt = {
+      receiptId: `demo_${Date.now()}`,
+      amount,
+      paidOn: new Date().toISOString(),
+    };
 
-      // NOTE: This endpoint is your backend mock that will be replaced with true PayFast flow later.
-      const res = await axios.post("http://localhost:5000/api/payments/create", payload, {
-        timeout: 20000,
-      });
-
-      // Expecting { receipt: {...} } or { checkoutUrl: '...' } from backend
-      // If backend returns checkoutUrl, redirect user there (real flow). Otherwise consider payment immediate.
-      if (res.data.checkoutUrl) {
-        // In a real flow redirect to payment provider
-        window.location.href = res.data.checkoutUrl;
-        return;
-      }
-
-      const receipt = res.data.receipt ?? {
-        receiptId: res.data.receiptId ?? `demo_${Date.now()}`,
-        amount,
-        paidOn: new Date().toISOString(),
-      };
-
-      // Call parent success handler
-      onSuccess(receipt);
-    } catch (err: any) {
-      console.error(err);
-      setError("Payment failed. Please try again or contact support.");
-    } finally {
+    setTimeout(() => {
       setIsPaying(false);
-    }
+      onSuccess(receipt);
+    }, 500);
   };
-
-  // UI small helpers
-  const providerLogos = (
-    <div className="flex items-center gap-3 mt-2">
-      <img src="https://img.icons8.com/color/48/000000/visa.png" alt="visa" className="h-6" />
-      <img src="https://img.icons8.com/color/48/000000/mastercard.png" alt="mc" className="h-6" />
-      <img src="https://img.icons8.com/color/48/000000/jazzcash.png" alt="jazz" className="h-6" />
-      <img src="https://img.icons8.com/color/48/000000/easypaisa.png" alt="easypaisa" className="h-6" />
-    </div>
-  );
 
   return (
     <div className="p-4 border rounded-md shadow-md bg-white mt-4">
       <h3 className="font-bold mb-3 text-gray-800">Payment</h3>
 
-      {/* Payment method selection */}
-      <div className="flex gap-3 flex-wrap mb-4">
-        <label className={`px-3 py-2 rounded-md cursor-pointer border ${method === "card" ? "bg-amber-100 border-amber-300" : "bg-white"}`}>
-          <input
-            type="radio"
-            name="method"
-            checked={method === "card"}
-            onChange={() => setMethod("card")}
-            className="mr-2"
-          />
-          Card
-        </label>
-
-        <label className={`px-3 py-2 rounded-md cursor-pointer border ${method === "jazzcash" ? "bg-amber-100 border-amber-300" : "bg-white"}`}>
-          <input type="radio" name="method" checked={method === "jazzcash"} onChange={() => setMethod("jazzcash")} className="mr-2" />
-          JazzCash
-        </label>
-
-        <label className={`px-3 py-2 rounded-md cursor-pointer border ${method === "easypaisa" ? "bg-amber-100 border-amber-300" : "bg-white"}`}>
-          <input type="radio" name="method" checked={method === "easypaisa"} onChange={() => setMethod("easypaisa")} className="mr-2" />
-          Easypaisa
-        </label>
-
-        <label className={`px-3 py-2 rounded-md cursor-pointer border ${method === "bank" ? "bg-amber-100 border-amber-300" : "bg-white"}`}>
-          <input type="radio" name="method" checked={method === "bank"} onChange={() => setMethod("bank")} className="mr-2" />
-          Bank Transfer
-        </label>
-      </div>
-
-      {/* Provider logos */}
-      {providerLogos}
-
-      {/* Billing fields */}
       <div className="grid sm:grid-cols-2 gap-3 mt-4">
         <input
           type="text"
@@ -245,68 +80,45 @@ const CardPayment: React.FC<{
         />
       </div>
 
-      {/* phone for wallet/bank */}
-      {(method === "jazzcash" || method === "easypaisa" || method === "bank") && (
-        <div className="mt-3">
+      <div className="mt-3">
+        <input
+          type="text"
+          placeholder="Card number"
+          value={cardNumber}
+          onChange={(e) => setCardNumber(e.target.value)}
+          className="p-2 border rounded-md w-full"
+        />
+        <div className="flex gap-3 mt-3">
           <input
-            type="tel"
-            placeholder="Phone (for wallet / bank confirmation)"
-            value={billingPhone}
-            onChange={(e) => setBillingPhone(e.target.value)}
-            className="p-2 border rounded-md w-full"
+            type="text"
+            placeholder="MM/YY"
+            value={expiry}
+            onChange={(e) => setExpiry(e.target.value)}
+            className="p-2 border rounded-md w-1/3"
           />
-          <p className="text-xs text-gray-500 mt-1">You will receive OTP / confirmation on this number.</p>
+          <input
+            type="text"
+            placeholder="CVC"
+            value={cvc}
+            onChange={(e) => setCvc(e.target.value)}
+            className="p-2 border rounded-md w-1/3"
+          />
+          <input
+            type="text"
+            placeholder="Postal / ZIP"
+            className="p-2 border rounded-md w-1/3"
+          />
         </div>
-      )}
 
-      {/* Card inputs */}
-      {method === "card" && (
-        <>
-          <div className="mt-3">
-            <input
-              type="text"
-              inputMode="numeric"
-              placeholder="Card number"
-              value={cardNumber}
-              onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-              className="p-2 border rounded-md w-full"
-              maxLength={19}
-            />
-            <div className="flex gap-3 mt-3">
-              <input
-                type="text"
-                placeholder="MM/YY"
-                value={expiry}
-                onChange={(e) => setExpiry(formatExpiry(e.target.value))}
-                className="p-2 border rounded-md w-1/3"
-                maxLength={5}
-              />
-              <input
-                type="text"
-                placeholder="CVC"
-                value={cvc}
-                onChange={(e) => setCvc(onlyDigits(e.target.value).slice(0, 4))}
-                className="p-2 border rounded-md w-1/3"
-                maxLength={4}
-              />
-              <input
-                type="text"
-                placeholder="Postal / ZIP"
-                className="p-2 border rounded-md w-1/3"
-              />
-            </div>
-            <div className="flex items-center justify-between mt-2 text-xs text-gray-600">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" checked={saveCard} onChange={(e) => setSaveCard(e.target.checked)} />
-                <span>Save card for faster checkout</span>
-              </label>
-              <span>Secure encrypted payment</span>
-            </div>
-          </div>
-        </>
-      )}
+        <div className="flex items-center justify-between mt-2 text-xs text-gray-600">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked={saveCard} onChange={(e) => setSaveCard(e.target.checked)} />
+            <span>Save card for faster checkout</span>
+          </label>
+          <span>Secure encrypted payment</span>
+        </div>
+      </div>
 
-      {/* Terms checkbox */}
       <div className="mt-4 flex items-start gap-3">
         <input id="agree" type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-1" />
         <label htmlFor="agree" className="text-sm">
@@ -316,10 +128,8 @@ const CardPayment: React.FC<{
         </label>
       </div>
 
-      {/* Error */}
       {error && <div className="mt-3 text-sm text-red-600">{error}</div>}
 
-      {/* Pay button */}
       <div className="mt-4">
         <button
           onClick={handlePay}
@@ -358,7 +168,6 @@ const DroneHiring: React.FC = () => {
   const [isPaid, setIsPaid] = useState(false);
   const [receipt, setReceipt] = useState<any | null>(null);
 
-  // Detect current location
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -382,7 +191,6 @@ const DroneHiring: React.FC = () => {
     setTimeout(() => setToastMsg(null), 4000);
   };
 
-  // Haversine distance calculation
   const calculateDistance = (coord1: [number, number], coord2: [number, number]) => {
     const R = 6371;
     const dLat = ((coord2[0] - coord1[0]) * Math.PI) / 180;
@@ -396,7 +204,6 @@ const DroneHiring: React.FC = () => {
     return R * c;
   };
 
-  // Fee + distance updates
   useEffect(() => {
     const { pickupCoords, dropoffCoords } = form;
     if (pickupCoords && dropoffCoords) {
@@ -414,101 +221,41 @@ const DroneHiring: React.FC = () => {
     }
   }, [form.pickupCoords, form.dropoffCoords]);
 
-  // Suggestions
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((p) => ({ ...p, [name]: value }));
-    if (name === "pickupAddress") fetchSuggestions(value, "pickup");
-    if (name === "dropoffAddress") fetchSuggestions(value, "dropoff");
   };
 
-  const fetchSuggestions = async (query: string, type: "pickup" | "dropoff") => {
-    if (!query || query.length < 3) {
-      if (type === "pickup") setPickupSuggestions([]);
-      else setDropoffSuggestions([]);
-      return;
-    }
-    try {
-      const res = await axios.get(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`
-      );
-      if (type === "pickup") setPickupSuggestions(res.data.slice(0, 5));
-      else setDropoffSuggestions(res.data.slice(0, 5));
-    } catch {
-      setToast("error", "Failed to load location suggestions");
-    }
-  };
-
-  const handleSelectSuggestion = (s: any, type: "pickup" | "dropoff") => {
-    const lat = parseFloat(s.lat);
-    const lon = parseFloat(s.lon);
-    if (type === "pickup") {
-      setForm((p) => ({ ...p, pickupAddress: s.display_name, pickupCoords: [lat, lon] }));
-      setPickupSuggestions([]);
-    } else {
-      setForm((p) => ({ ...p, dropoffAddress: s.display_name, dropoffCoords: [lat, lon] }));
-      setDropoffSuggestions([]);
-    }
-  };
-
-  // Map click handlers
-  const PickupMapHandler: React.FC = () => {
-    useMapEvents({
-      click(e: LeafletMouseEvent) {
-        const coords: [number, number] = [e.latlng.lat, e.latlng.lng];
-        setForm((p) => ({
-          ...p,
-          pickupCoords: coords,
-          pickupAddress: `${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`,
-        }));
-        setToast("info", "Pickup set on map.");
-      },
-    });
-    return null;
-  };
-
-  const DropoffMapHandler: React.FC = () => {
-    useMapEvents({
-      click(e: LeafletMouseEvent) {
-        const coords: [number, number] = [e.latlng.lat, e.latlng.lng];
-        setForm((p) => ({
-          ...p,
-          dropoffCoords: coords,
-          dropoffAddress: `${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`,
-        }));
-        setToast("info", "Drop-off set on map.");
-      },
-    });
-    return null;
-  };
-
-  // Submit order (after payment success)
   const submitOrder = async (receipt: any) => {
-    try {
-      const payload = {
-        pickupLocation: form.pickupAddress,
-        dropoffLocation: form.dropoffAddress,
-        pickupCoords: form.pickupCoords,
-        dropoffCoords: form.dropoffCoords,
-        itemName: form.itemName,
-        itemWeight: parseFloat(form.itemWeight),
-        specialInstructions: form.specialInstructions,
-        paymentMethod: "Card",
-        estimatedFee: form.estimatedFee,
-        receipt,
-      };
-      const res = await axios.post("http://localhost:5000/api/droneOrders", payload);
-      navigate("/order-confirmed", { state: { order: res.data.order } });
-    } catch {
-      setToast("error", "Failed to confirm drone hire.");
-    }
-  };
+  try {
+    // You can still send order to backend here if needed
+    console.log("Order submitted:", { ...form, receipt });
+    setToast("info", "Drone hire confirmed!");
+
+    // Navigate to OrderConfirmed page
+    navigate("/order-confirmed", { state: { receipt, form } });
+  } catch (err) {
+    setToast("error", "Failed to confirm order. Please try again.");
+  }
+};
+
 
   const handlePaymentSuccess = (receipt: any) => {
     setReceipt(receipt);
     setIsPaid(true);
-    setToast("info", "Payment successful! Confirming drone hire...");
-    submitOrder(receipt);
+    setToast("info", "Payment successful!");
+  };
+
+  const LocationMarker: React.FC<{
+    position: [number, number];
+    setCoords: (coords: [number, number]) => void;
+  }> = ({ position, setCoords }) => {
+    useMapEvents({
+      click(e: LeafletMouseEvent) {
+        setCoords([e.latlng.lat, e.latlng.lng]);
+      },
+    });
+    return <Marker position={position} icon={markerIcon}></Marker>;
   };
 
   return (
@@ -534,9 +281,7 @@ const DroneHiring: React.FC = () => {
             Hire a Drone for Delivery
           </h1>
 
-          {/* Full Form */}
           <form className="space-y-8">
-            {/* Pickup Section */}
             <section>
               <h2 className="text-xl font-semibold mb-2 text-gray-800">Pickup Location</h2>
               <input
@@ -545,34 +290,25 @@ const DroneHiring: React.FC = () => {
                 value={form.pickupAddress}
                 onChange={handleChange}
                 placeholder="Search or click on map"
-                className="w-full p-2 border rounded-md"
+                className="w-full p-2 border rounded-md mb-2"
               />
-              {pickupSuggestions.length > 0 && (
-                <ul className="border rounded-md mt-1 max-h-40 overflow-y-auto bg-white">
-                  {pickupSuggestions.map((s, i) => (
-                    <li
-                      key={i}
-                      onClick={() => handleSelectSuggestion(s, "pickup")}
-                      className="p-2 hover:bg-amber-100 cursor-pointer"
-                    >
-                      {s.display_name}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <div className="mt-3 h-64 border rounded-lg overflow-hidden">
-                <MapContainer center={form.pickupCoords} zoom={13} style={{ height: "100%" }}>
-                  <TileLayer
-                    url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
-                  />
-                  <Marker position={form.pickupCoords} icon={markerIcon} />
-                  <PickupMapHandler />
-                </MapContainer>
-              </div>
+              <MapContainer
+                center={form.pickupCoords}
+                zoom={13}
+                style={{ height: "200px", borderRadius: "8px" }}
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <LocationMarker
+                  position={form.pickupCoords}
+                  setCoords={(coords) =>
+                    setForm((p) => ({ ...p, pickupCoords: coords }))
+                  }
+                />
+              </MapContainer>
             </section>
 
-            {/* Dropoff Section */}
             <section>
               <h2 className="text-xl font-semibold mb-2 text-gray-800">Drop-off Location</h2>
               <input
@@ -581,34 +317,25 @@ const DroneHiring: React.FC = () => {
                 value={form.dropoffAddress}
                 onChange={handleChange}
                 placeholder="Search or click on map"
-                className="w-full p-2 border rounded-md"
+                className="w-full p-2 border rounded-md mb-2"
               />
-              {dropoffSuggestions.length > 0 && (
-                <ul className="border rounded-md mt-1 max-h-40 overflow-y-auto bg-white">
-                  {dropoffSuggestions.map((s, i) => (
-                    <li
-                      key={i}
-                      onClick={() => handleSelectSuggestion(s, "dropoff")}
-                      className="p-2 hover:bg-amber-100 cursor-pointer"
-                    >
-                      {s.display_name}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <div className="mt-3 h-64 border rounded-lg overflow-hidden">
-                <MapContainer center={form.dropoffCoords} zoom={13} style={{ height: "100%" }}>
-                  <TileLayer
-                    url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
-                  />
-                  <Marker position={form.dropoffCoords} icon={markerIcon} />
-                  <DropoffMapHandler />
-                </MapContainer>
-              </div>
+              <MapContainer
+                center={form.dropoffCoords}
+                zoom={13}
+                style={{ height: "200px", borderRadius: "8px" }}
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <LocationMarker
+                  position={form.dropoffCoords}
+                  setCoords={(coords) =>
+                    setForm((p) => ({ ...p, dropoffCoords: coords }))
+                  }
+                />
+              </MapContainer>
             </section>
 
-            {/* Distance + Fare */}
             {distance && (
               <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 bg-amber-50 p-4 rounded-md border border-amber-200">
                 <p className="text-gray-700 font-medium">
@@ -622,38 +349,35 @@ const DroneHiring: React.FC = () => {
               </section>
             )}
 
-            {/* Item details */}
             <section>
               <h2 className="text-xl font-semibold mb-2 text-gray-800">Item Details</h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                <input
-                  type="text"
-                  name="itemName"
-                  value={form.itemName}
-                  onChange={handleChange}
-                  placeholder="Item name"
-                  required
-                  className="p-2 border rounded-md"
-                />
-                <input
-                  type="number"
-                  name="itemWeight"
-                  value={form.itemWeight}
-                  onChange={(e) => {
-                    let value = e.target.value;
-                    if (!/^\d{0,1}(\.\d{0,1})?$/.test(value)) return;
-                    const numValue = parseFloat(value);
-                    if (numValue < 0 || numValue > 5) return;
-                    setForm((p) => ({ ...p, itemWeight: value }));
-                  }}
-                  placeholder="Weight (0 – 5 kg)"
-                  required
-                  step="0.1"
-                  min="0"
-                  max="5"
-                  className="p-2 border rounded-md"
-                />
-              </div>
+              <input
+                type="text"
+                name="itemName"
+                value={form.itemName}
+                onChange={handleChange}
+                placeholder="Item name"
+                required
+                className="p-2 border rounded-md w-full mb-3"
+              />
+              <input
+                type="number"
+                name="itemWeight"
+                value={form.itemWeight}
+                onChange={(e) => {
+                  let value = e.target.value;
+                  if (!/^\d{0,1}(\.\d{0,1})?$/.test(value)) return;
+                  const numValue = parseFloat(value);
+                  if (numValue < 0 || numValue > 5) return;
+                  setForm((p) => ({ ...p, itemWeight: value }));
+                }}
+                placeholder="Weight (0 – 5 kg)"
+                required
+                step="0.1"
+                min="0"
+                max="5"
+                className="p-2 border rounded-md w-full"
+              />
               <textarea
                 name="specialInstructions"
                 value={form.specialInstructions}
@@ -664,18 +388,23 @@ const DroneHiring: React.FC = () => {
               />
             </section>
 
-            {/* Payment */}
             {form.estimatedFee && !isPaid && (
               <CardPayment amount={Number(form.estimatedFee)} onSuccess={handlePaymentSuccess} />
             )}
 
-            {/* Receipt */}
             {isPaid && receipt && (
               <div className="p-4 border rounded-md text-green-700 bg-green-50 mt-4">
                 <h2 className="font-semibold">✅ Payment Successful</h2>
                 <p>Receipt ID: {receipt.receiptId}</p>
                 <p>Amount Paid: ₨ {receipt.amount}</p>
                 <p>Date: {new Date(receipt.paidOn).toLocaleString()}</p>
+
+                <button
+                  onClick={() => submitOrder(receipt)}
+                  className="mt-4 px-6 py-2 bg-amber-600 text-white rounded-full font-semibold shadow hover:bg-amber-700"
+                >
+                  Confirm Hire Drone
+                </button>
               </div>
             )}
           </form>
