@@ -176,58 +176,32 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* Drone Specs */}
-      <section className="py-24 bg-gradient-to-b from-amber-50 via-white to-yellow-50">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-amber-600 mb-3">
-            Our Top Drones
-          </h2>
-          <p className="text-gray-600">
-            Choose the drone that matches your delivery needs — precision, power, and reliability.
-          </p>
-        </div>
+      {/* Featured Drone Section */}
+<section className="py-24 bg-gradient-to-b from-amber-50 via-white to-yellow-50 text-center">
+  <div className="max-w-4xl mx-auto px-6 flex flex-col items-center">
+    <h2 className="text-4xl font-bold text-amber-600 mb-10 animate-fadeInDown">
+      Our Featured Drone
+    </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto px-6">
-          {[
-            {
-              img: "https://i.pinimg.com/736x/15/77/05/15770525f5284e9692c7fd7a6daac6d6.jpg",
-              title: "Drone X1",
-              desc: "High-speed drone with 4K camera, perfect for express deliveries.",
-            },
-            {
-              img: "https://i.pinimg.com/1200x/36/04/2c/36042ca756f9682f76f9b480d36eae27.jpg",
-              title: "Drone A2",
-              desc: "AI-powered navigation with real-time obstacle detection.",
-            },
-            {
-              img: "https://i.pinimg.com/1200x/08/5a/aa/085aaae92231935bbd7209abecdc1d89.jpg",
-              title: "Drone Z3",
-              desc: "Long-range drone with up to 2 hours flight time.",
-            },
-          ].map((drone, i) => (
-            <div
-              key={i}
-              className="bg-white border border-amber-100 rounded-2xl shadow-lg hover:shadow-amber-300/60 transform hover:-translate-y-2 transition-all duration-300 text-center p-6"
-            >
-              <img
-                src={drone.img}
-                alt={drone.title}
-                className="w-full h-52 object-cover rounded-xl mb-5"
-              />
-              <h3 className="text-2xl font-semibold text-gray-800">
-                {drone.title}
-              </h3>
-              <p className="text-gray-600 mt-2 mb-4">{drone.desc}</p>
-              <button
-                onClick={handleHireDrone}
-                className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-full font-medium shadow-md transition-all"
-              >
-                Hire Now
-              </button>
-            </div>
-          ))}
-        </div>
-      </section>
+    <div className="relative w-full max-w-sm mb-6 animate-fadeInUp">
+      <img
+        src="https://i.pinimg.com/736x/15/77/05/15770525f5284e9692c7fd7a6daac6d6.jpg"
+        alt="DJI Mavic Air 2"
+        className="w-full h-auto object-contain rounded-xl shadow-lg hover:scale-105 transition-transform duration-500"
+      />
+    </div>
+
+    <h3 className="text-2xl font-semibold text-gray-800 animate-fadeInUp delay-200">
+      DJI Mavic Air 2
+    </h3>
+
+    <p className="text-gray-600 mt-4 max-w-md animate-fadeInUp delay-400">
+      Professional-grade drone for precise and reliable delivery operations.
+      Equipped with advanced AI navigation and real-time tracking.
+    </p>
+  </div>
+</section>
+
 
       {/* Testimonials */}
 <section className="py-24 bg-gradient-to-r from-amber-100 via-white to-yellow-100">
@@ -321,38 +295,6 @@ export default function DashboardPage() {
 </section>
 
 
-      {/* Contact Section */}
-      <section className="py-24 bg-gradient-to-r from-white to-amber-50">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold text-amber-600 mb-6">Contact Us</h2>
-          <p className="text-gray-700 mb-10">
-            Have a question or need assistance? Reach out to our team anytime.
-          </p>
-          <form className="grid grid-cols-1 gap-6 max-w-2xl mx-auto">
-            <input
-              type="text"
-              placeholder="Your Name"
-              className="border border-amber-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-            <input
-              type="email"
-              placeholder="Your Email"
-              className="border border-amber-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-            <textarea
-              placeholder="Your Message"
-              rows={5}
-              className="border border-amber-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            ></textarea>
-            <button
-              type="submit"
-              className="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 rounded-full transition-all shadow-md hover:scale-105"
-            >
-              Send Message
-            </button>
-          </form>
-        </div>
-      </section>
 
       {/* Footer */}
 <footer className="bg-gradient-to-r from-amber-600 to-yellow-500 text-white py-16">

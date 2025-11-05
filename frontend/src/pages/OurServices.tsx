@@ -73,9 +73,7 @@ const OurServices: React.FC = () => {
           ))}
         </div>
 
-        <div className="mt-10 bg-amber-500 text-black font-semibold px-8 py-3 rounded-full hover:bg-amber-400 transition-all duration-300 shadow-lg">
-          We Deliver. You Fly Higher.
-        </div>
+        
       </main>
 
       {/* Footer */}

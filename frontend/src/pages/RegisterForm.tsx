@@ -29,6 +29,8 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [message, setMessage] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
 
   // Step 2
   const [cnicNumber, setCnicNumber] = useState("");
@@ -83,6 +85,11 @@ export default function RegisterForm() {
     else if (!/^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(password))
       newErrors.password =
         "Password must have at least 6 characters with letters & numbers";
+
+    if (!confirmPassword) newErrors.confirmPassword = "Please confirm your password";
+    else if (password !== confirmPassword)
+       newErrors.confirmPassword = "Passwords do not match";
+
 
     setErrors(newErrors);
 
@@ -213,51 +220,83 @@ export default function RegisterForm() {
         <p className="text-center text-yellow-600 mb-6">Step {step} of 3</p>
 
         {/* Step 1 */}
-        {step === 1 && (
-          <div className="space-y-4">
-            <input
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Full Name"
-              className="w-full p-3 rounded border border-gray-300 focus:ring-2 focus:ring-yellow-600"
-            />
-            {errors.fullName && <p className="text-red-600 text-sm">{errors.fullName}</p>}
+        {/* Step 1 */}
+{step === 1 && (
+  <div className="space-y-4">
+    {/* Full Name */}
+    <input
+      value={fullName}
+      onChange={(e) => setFullName(e.target.value)}
+      placeholder="Full Name"
+      className="w-full p-3 rounded border border-gray-300 focus:ring-2 focus:ring-yellow-600"
+    />
+    {errors.fullName && (
+      <p className="text-red-600 text-sm">{errors.fullName}</p>
+    )}
 
-            <input
-              value={fatherName}
-              onChange={(e) => setFatherName(e.target.value)}
-              placeholder="Father Name"
-              className="w-full p-3 rounded border border-gray-300 focus:ring-2 focus:ring-yellow-600"
-            />
-            {errors.fatherName && <p className="text-red-600 text-sm">{errors.fatherName}</p>}
+    {/* Father Name */}
+    <input
+      value={fatherName}
+      onChange={(e) => setFatherName(e.target.value)}
+      placeholder="Father Name"
+      className="w-full p-3 rounded border border-gray-300 focus:ring-2 focus:ring-yellow-600"
+    />
+    {errors.fatherName && (
+      <p className="text-red-600 text-sm">{errors.fatherName}</p>
+    )}
 
-            <div className="relative">
-              <input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                className="w-full p-3 rounded border border-gray-300 focus:ring-2 focus:ring-yellow-600"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600"
-              >
-                {showPassword ? "🙈" : "👁"}
-              </button>
-            </div>
-            {errors.password && <p className="text-red-600 text-sm">{errors.password}</p>}
+    {/* Password */}
+    <div className="relative">
+      <input
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        type={showPassword ? "text" : "password"}
+        placeholder="Password"
+        className="w-full p-3 rounded border border-gray-300 focus:ring-2 focus:ring-yellow-600"
+      />
+      <button
+        type="button"
+        onClick={() => setShowPassword(!showPassword)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600"
+      >
+        {showPassword ? "🙈" : "👁"}
+      </button>
+    </div>
+    {errors.password && (
+      <p className="text-red-600 text-sm">{errors.password}</p>
+    )}
 
-            <button
-              type="button"
-              onClick={handleNextStep1}
-              className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded"
-            >
-              Next →
-            </button>
-          </div>
-        )}
+    {/* ✅ Confirm Password */}
+    <div className="relative">
+      <input
+        type={showPassword ? "text" : "password"}
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        placeholder="Confirm Password"
+        className="w-full p-3 rounded border border-gray-300 focus:ring-2 focus:ring-yellow-600"
+      />
+      <button
+        type="button"
+        onClick={() => setShowPassword(!showPassword)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600"
+      >
+        {showPassword ? "🙈" : "👁"}
+      </button>
+    </div>
+    {errors.confirmPassword && (
+      <p className="text-red-600 text-sm">{errors.confirmPassword}</p>
+    )}
+
+    <button
+      type="button"
+      onClick={handleNextStep1}
+      className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded"
+    >
+      Next →
+    </button>
+  </div>
+)}
+
 
         {/* Step 2 */}
         {step === 2 && (

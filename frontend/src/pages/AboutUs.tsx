@@ -59,9 +59,7 @@ const AboutUs: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-amber-500 text-black font-semibold px-8 py-3 rounded-full mt-8 hover:bg-amber-400 transition-all duration-300 shadow-lg">
-          Empowering Tomorrow’s Deliveries — Today.
-        </div>
+        
       </main>
 
       {/* Footer */}

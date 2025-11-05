@@ -268,4 +268,83 @@ router.get("/profile", verifyToken, async (req, res) => {
   }
 });
 
+// ✅ ADDRESSES CRUD
+
+// Get all addresses
+router.get("/addresses", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("addresses");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user.addresses);
+  } catch (err) {
+    console.error("Fetch addresses error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Add new address
+router.post("/addresses", verifyToken, async (req, res) => {
+  try {
+    const { label, address } = req.body;
+    if (!label || !address)
+      return res.status(400).json({ message: "Label and address required" });
+
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.addresses.push({ label, address });
+    await user.save();
+
+    res.status(201).json(user.addresses);
+  } catch (err) {
+    console.error("Add address error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Update address
+router.put("/addresses/:addressId", verifyToken, async (req, res) => {
+  try {
+    const { label, address } = req.body;
+    const { addressId } = req.params;
+
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const addr = user.addresses.id(addressId);
+    if (!addr) return res.status(404).json({ message: "Address not found" });
+
+    addr.label = label || addr.label;
+    addr.address = address || addr.address;
+    await user.save();
+
+    res.json(user.addresses);
+  } catch (err) {
+    console.error("Update address error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Delete address
+router.delete("/addresses/:addressId", verifyToken, async (req, res) => {
+  try {
+    const { addressId } = req.params;
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.addresses = user.addresses.filter(
+      (addr) => addr._id.toString() !== addressId
+    );
+    await user.save();
+
+    res.json(user.addresses);
+  } catch (err) {
+    console.error("Delete address error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+
 export default router;
