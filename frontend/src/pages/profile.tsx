@@ -124,143 +124,191 @@ const Profile: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-amber-300 via-amber-200 to-amber-100 text-gray-900 p-10">
-      {/* Header */}
-      <h1 className="text-3xl font-bold text-amber-700 mb-6">
-        Account Profile
-      </h1>
+      {/* ✅ Header */}
+      <header className="flex justify-between items-center bg-white shadow-md py-4 px-8 rounded-b-2xl">
+        <h1
+          className="text-2xl font-bold text-amber-700 cursor-pointer"
+          onClick={() => navigate("/")}
+        >
+          AIRGO
+        </h1>
+        <button
+          onClick={() => navigate("/")}
+          className="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-full shadow transition"
+        >
+          Back to Dashboard
+        </button>
+      </header>
 
-      {/* Account Info */}
-      <div className="bg-white shadow-md rounded-xl border border-gray-200 mb-8">
-        <div className="flex justify-between items-center p-5 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">
-            👤 Account Information
-          </h2>
-        </div>
+      {/* ✅ Main Profile Content */}
+      <main className="flex-grow p-10 text-gray-900">
+        {/* Header */}
+        <h1 className="text-3xl font-bold text-amber-700 mb-6">
+          Account Profile
+        </h1>
 
-        <div className="p-6 grid md:grid-cols-2 gap-6">
-          {[
-            { label: "Full Name", value: user.fullName },
-            { label: "Father Name", value: user.fatherName },
-            { label: "Email", value: user.email },
-            { label: "Phone", value: user.phone },
-            { label: "CNIC", value: user.cnicNumber },
-            { label: "Country", value: user.country },
-            { label: "City", value: user.city },
-            { label: "Date of Birth", value: user.dob },
-          ].map((f, i) => (
-            <div key={i}>
-              <p className="text-sm font-medium text-gray-600 mb-1">
-                {f.label}
-              </p>
-              <div className="p-2 border border-gray-200 rounded-md bg-gray-50">
-                {f.value}
+        {/* Account Info */}
+        <div className="bg-white shadow-md rounded-xl border border-gray-200 mb-8">
+          <div className="flex justify-between items-center p-5 border-b border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-900">
+              👤 Account Information
+            </h2>
+          </div>
+
+          <div className="p-6 grid md:grid-cols-2 gap-6">
+            {[
+              { label: "Full Name", value: user.fullName },
+              { label: "Father Name", value: user.fatherName },
+              { label: "Email", value: user.email },
+              { label: "Phone", value: user.phone },
+              { label: "CNIC", value: user.cnicNumber },
+              { label: "Country", value: user.country },
+              { label: "City", value: user.city },
+              { label: "Date of Birth", value: user.dob },
+            ].map((f, i) => (
+              <div key={i}>
+                <p className="text-sm font-medium text-gray-600 mb-1">
+                  {f.label}
+                </p>
+                <div className="p-2 border border-gray-200 rounded-md bg-gray-50">
+                  {f.value}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Addresses */}
-      <div className="bg-white shadow-md rounded-xl border border-gray-200 mb-8">
-        <div className="flex justify-between items-center p-5 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">📍 Addresses</h2>
+        {/* Addresses */}
+        <div className="bg-white shadow-md rounded-xl border border-gray-200 mb-8">
+          <div className="flex justify-between items-center p-5 border-b border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-900">📍 Addresses</h2>
+            <button
+              onClick={() => {
+                setIsAddingAddress(!isAddingAddress);
+                setEditAddressId(null);
+                setNewAddress({ label: "", address: "" });
+              }}
+              className="px-4 py-2 rounded-md text-sm font-medium bg-amber-500 text-white hover:bg-amber-600 transition"
+            >
+              {isAddingAddress ? "Cancel" : "Add New Address"}
+            </button>
+          </div>
+
+          <div className="p-6 space-y-4">
+            {addresses.length === 0 && (
+              <p className="text-gray-600">No addresses added yet.</p>
+            )}
+
+            {addresses.map((addr) => (
+              <div
+                key={addr._id}
+                className="flex justify-between items-center bg-gray-50 border border-gray-200 rounded-lg p-4"
+              >
+                <div>
+                  <p className="font-semibold text-gray-900">{addr.label}</p>
+                  <p className="text-gray-600">{addr.address}</p>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => handleEditAddress(addr)}
+                    className="text-amber-600 hover:underline"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteAddress(addr._id)}
+                    className="text-red-600 hover:underline"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            {isAddingAddress && (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-2 animate-fade-in">
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Label
+                  </label>
+                  <input
+                    type="text"
+                    value={newAddress.label}
+                    onChange={(e) =>
+                      setNewAddress({ ...newAddress, label: e.target.value })
+                    }
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    value={newAddress.address}
+                    onChange={(e) =>
+                      setNewAddress({ ...newAddress, address: e.target.value })
+                    }
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+                <button
+                  onClick={handleSaveAddress}
+                  className="mt-3 px-4 py-2 rounded-md bg-amber-500 text-white hover:bg-amber-600"
+                >
+                  {editAddressId ? "Update Address" : "Save Address"}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Account Settings Section */}
+        <div className="bg-white shadow-md rounded-xl border border-gray-200 p-6">
+          <div className="flex justify-between items-center p-5 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">⚙️ Account Settings</h2>
+        </div>
+
+        <div className="p-4 space-y-2"></div>
           <button
-            onClick={() => {
-              setIsAddingAddress(!isAddingAddress);
-              setEditAddressId(null);
-              setNewAddress({ label: "", address: "" });
-            }}
-            className="px-4 py-2 rounded-md text-sm font-medium bg-amber-500 text-white hover:bg-amber-600 transition"
+            onClick={() => navigate("/change-password")}
+            className="block text-left w-full text-gray-800 hover:text-amber-600 mb-2"
           >
-            {isAddingAddress ? "Cancel" : "Add New Address"}
+            Change Password
+          </button>
+          <button
+            onClick={handleLogout}
+            className="block text-left w-full text-gray-800 hover:text-amber-600"
+          >
+            Logout
           </button>
         </div>
+      </main>
 
-        <div className="p-6 space-y-4">
-          {addresses.length === 0 && (
-            <p className="text-gray-600">No addresses added yet.</p>
-          )}
-
-          {addresses.map((addr) => (
-            <div
-              key={addr._id}
-              className="flex justify-between items-center bg-gray-50 border border-gray-200 rounded-lg p-4"
-            >
-              <div>
-                <p className="font-semibold text-gray-900">{addr.label}</p>
-                <p className="text-gray-600">{addr.address}</p>
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => handleEditAddress(addr)}
-                  className="text-amber-600 hover:underline"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDeleteAddress(addr._id)}
-                  className="text-red-600 hover:underline"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-
-          {isAddingAddress && (
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-2 animate-fade-in">
-              <div className="mb-3">
-                <label className="block text-sm font-medium text-gray-600 mb-1">
-                  Label
-                </label>
-                <input
-                  type="text"
-                  value={newAddress.label}
-                  onChange={(e) =>
-                    setNewAddress({ ...newAddress, label: e.target.value })
-                  }
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  value={newAddress.address}
-                  onChange={(e) =>
-                    setNewAddress({ ...newAddress, address: e.target.value })
-                  }
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                />
-              </div>
-              <button
-                onClick={handleSaveAddress}
-                className="mt-3 px-4 py-2 rounded-md bg-amber-500 text-white hover:bg-amber-600"
-              >
-                {editAddressId ? "Update Address" : "Save Address"}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Settings */}
-      <div className="bg-white shadow-md rounded-xl border border-gray-200 p-6">
-        <button
-          onClick={() => navigate("/change-password")}
-          className="block text-left w-full text-gray-800 hover:text-amber-600 mb-2"
-        >
-          Change Password
-        </button>
-        <button
-          onClick={handleLogout}
-          className="block text-left w-full text-gray-800 hover:text-amber-600"
-        >
-          Logout
-        </button>
-      </div>
+      {/* ✅ Footer */}
+      <footer className="bg-amber-700 text-white py-6 text-center mt-10">
+        <p className="text-sm mb-2">
+          <a href="/privacy-policy" className="hover:underline mx-2">
+            Privacy Policy
+          </a>{" "}
+          |
+          <a href="/refund-policy" className="hover:underline mx-2">
+            Return & Refund Policy
+          </a>{" "}
+          |
+          <a href="/service-policy" className="hover:underline mx-2">
+            Service Policy
+          </a>{" "}
+          |
+          <a href="/terms" className="hover:underline mx-2">
+            Terms & Conditions
+          </a>
+        </p>
+        <p className="text-xs text-amber-200">
+          © {new Date().getFullYear()} AirGO | Drone Delivery System
+        </p>
+      </footer>
     </div>
   );
 };
