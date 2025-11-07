@@ -42,61 +42,120 @@ export default function DashboardPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-amber-50/60 to-yellow-100/60"></div>
 
         {/* Navbar */}
-        <header className="absolute top-0 left-0 w-full flex justify-between items-center px-6 sm:px-12 py-6 z-20">
-          <h1
-            onClick={() => navigate("/")}
-            className="text-3xl font-extrabold tracking-tight text-gray-900 cursor-pointer hover:text-amber-600 transition-all"
-          >
-            <span className="text-amber-500">Air</span>GO
-          </h1>
+<header className="absolute top-0 left-0 w-full flex justify-between items-center px-6 sm:px-12 py-6 z-20">
+  {/* Brand */}
+  <h1
+    onClick={() => navigate("/")}
+    className="text-3xl font-extrabold tracking-tight text-gray-900 cursor-pointer hover:text-amber-600 transition-all"
+  >
+    <span className="text-amber-500">Air</span>GO
+  </h1>
 
-          <nav className="hidden md:flex space-x-8 text-gray-900 font-medium">
-            <button
-              onClick={() => handleNavClick("/about-us")}
-              className="relative px-2 py-1 hover:text-amber-600 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-amber-500 after:w-0 hover:after:w-full after:transition-all after:duration-300"
-            >
-              About Us
-            </button>
-            <button
-              onClick={() => handleNavClick("/our-services")}
-              className="relative px-2 py-1 hover:text-amber-600 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-amber-500 after:w-0 hover:after:w-full after:transition-all after:duration-300"
-            >
-              Our Services
-            </button>
-          </nav>
+  {/* Desktop nav */}
+  <nav className="hidden md:flex items-center space-x-8 text-gray-900 font-medium">
+    <button
+      onClick={() => handleNavClick("/about-us")}
+      className="relative px-2 py-1 hover:text-amber-600 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-amber-500 after:w-0 hover:after:w-full after:transition-all after:duration-300"
+    >
+      About Us
+    </button>
 
-          <button
-            className="md:hidden text-gray-900 text-2xl px-2"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? "✕" : "☰"}
-          </button>
+    <button
+      onClick={() => handleNavClick("/our-services")}
+      className="relative px-2 py-1 hover:text-amber-600 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-amber-500 after:w-0 hover:after:w-full after:transition-all after:duration-300"
+    >
+      Our Services
+    </button>
 
-          <div
-            onClick={() => navigate("/profile")}
-            className="w-12 h-12 flex items-center justify-center rounded-full bg-transparent cursor-pointer hover:scale-110 transition-transform ml-4"
-              >
-            <User className="text-amber-600 w-9 h-9 hover:text-amber-700 transition-colors" />
-          </div>
+    {/* Show Login/Register only if NOT logged in */}
+    {!isLoggedIn && (
+      <>
+        <button
+          onClick={() => navigate("/login")}
+          className="relative px-2 py-1 hover:text-amber-600 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-amber-500 after:w-0 hover:after:w-full after:transition-all after:duration-300"
+        >
+          Login
+        </button>
 
-        </header>
+        <button
+          onClick={() => navigate("/register")}
+          className="relative px-2 py-1 hover:text-amber-600 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-amber-500 after:w-0 hover:after:w-full after:transition-all after:duration-300"
+        >
+          Registration
+        </button>
+      </>
+    )}
+  </nav>
 
-        {menuOpen && (
-          <div className="absolute top-20 right-6 bg-white/90 backdrop-blur-md rounded-lg shadow-lg p-6 flex flex-col space-y-4 md:hidden z-30">
-            {["/about-us", "/our-services"].map((path, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  handleNavClick(path);
-                  setMenuOpen(false);
-                }}
-                className="text-gray-900 font-medium hover:text-amber-600 transition text-left"
-              >
-                {path === "/about-us" ? "About Us" : "Our Services"}
-              </button>
-            ))}
-          </div>
-        )}
+  {/* Mobile menu toggle */}
+  <button
+    className="md:hidden text-gray-900 text-2xl px-2"
+    onClick={() => setMenuOpen(!menuOpen)}
+  >
+    {menuOpen ? "✕" : "☰"}
+  </button>
+
+  {/* Profile / avatar */}
+  <div
+    onClick={() => navigate("/profile")}
+    className="w-12 h-12 flex items-center justify-center rounded-full bg-transparent cursor-pointer hover:scale-110 transition-transform ml-4"
+  >
+    <User className="text-amber-600 w-9 h-9 hover:text-amber-700 transition-colors" />
+  </div>
+</header>
+
+{/* Mobile dropdown menu (show on small screens) */}
+{menuOpen && (
+  <div className="absolute top-20 right-6 bg-white/90 backdrop-blur-md rounded-lg shadow-lg p-6 flex flex-col space-y-4 md:hidden z-30">
+    <button
+      onClick={() => {
+        handleNavClick("/about-us");
+        setMenuOpen(false);
+      }}
+      className="text-gray-900 font-medium hover:text-amber-600 text-left"
+    >
+      About Us
+    </button>
+
+    <button
+      onClick={() => {
+        handleNavClick("/our-services");
+        setMenuOpen(false);
+      }}
+      className="text-gray-900 font-medium hover:text-amber-600 text-left"
+    >
+      Our Services
+    </button>
+
+    {/* Mobile: show Login/Register only when NOT logged in */}
+    {!isLoggedIn && (
+      <>
+        <button
+          onClick={() => {
+            navigate("/login");
+            setMenuOpen(false);
+          }}
+          className="text-gray-900 font-medium hover:text-amber-600 text-left"
+        >
+          Login
+        </button>
+
+        <button
+          onClick={() => {
+            navigate("/register");
+            setMenuOpen(false);
+          }}
+          className="text-gray-900 font-medium hover:text-amber-600 text-left"
+        >
+          Registration
+        </button>
+      </>
+    )}
+  </div>
+)}
+
+
+
 
         {/* Hero Content */}
         <div className="relative flex flex-col md:flex-row items-center justify-center w-full mt-20 md:mt-32 gap-12 z-10">

@@ -213,14 +213,36 @@ export default function RegisterForm() {
         backgroundPosition: "center",
       }}
     >
+
+      {/* Header */}
+<header className="absolute top-4 left-0 w-full flex items-center justify-between px-8">
+  {/* Left - AirGO logo */}
+  <h1
+    onClick={() => navigate("/")}
+    className="text-2xl font-bold text-yellow-700 cursor-pointer hover:text-yellow-800 drop-shadow-md"
+  >
+    AirGO
+  </h1>
+
+  {/* Right - Back to Dashboard */}
+  <button
+    onClick={() => navigate("/")}
+    className="bg-amber-500 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-amber-600 transition"
+  >
+    Back to Dashboard
+  </button>
+</header>
+
+
+
       <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm ml-24">
         <h2 className="text-2xl font-bold text-center mb-4 text-yellow-700">
           Register
         </h2>
         <p className="text-center text-yellow-600 mb-6">Step {step} of 3</p>
 
-        {/* Step 1 */}
-        {/* Step 1 */}
+        {/*    Step 1    */}
+       
 {step === 1 && (
   <div className="space-y-4">
     {/* Full Name */}

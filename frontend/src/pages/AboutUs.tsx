@@ -2,6 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+
 const AboutUs: React.FC = () => {
   return (
     <div className="bg-black text-white min-h-screen flex flex-col">

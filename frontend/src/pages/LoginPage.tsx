@@ -36,13 +36,36 @@ export default function LoginPage() {
 
   return (
     <div
-      className="h-screen w-full flex items-center justify-center"
+      className="h-screen w-full flex items-center justify-start pl-20"
       style={{
         backgroundImage: `url(${BackgroundImg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
+
+        {/* Header */}
+<header className="absolute top-4 left-0 w-full flex items-center justify-between px-8">
+  {/* Left - AirGO logo */}
+  <h1
+    onClick={() => navigate("/")}
+    className="text-2xl font-bold text-yellow-700 cursor-pointer hover:text-yellow-800 drop-shadow-md"
+  >
+    AirGO
+  </h1>
+
+  {/* Right - Back to Dashboard button */}
+  <button
+    onClick={() => navigate("/")}
+    className="bg-amber-500 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-amber-600 transition"
+  >
+    Back to Dashboard
+  </button>
+</header>
+
+
+
+      {/* Login card */}
       <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm">
         <h2 className="text-2xl font-bold text-center mb-6 text-yellow-700">
           Login
