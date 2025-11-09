@@ -368,10 +368,10 @@ const DroneHiring: React.FC = () => {
                   let value = e.target.value;
                   if (!/^\d{0,1}(\.\d{0,1})?$/.test(value)) return;
                   const numValue = parseFloat(value);
-                  if (numValue < 0 || numValue > 5) return;
+                  if (numValue < 0 || numValue > 2) return;
                   setForm((p) => ({ ...p, itemWeight: value }));
                 }}
-                placeholder="Weight (0 – 5 kg)"
+                placeholder="Weight (0 – 2 kg)"
                 required
                 step="0.1"
                 min="0"
