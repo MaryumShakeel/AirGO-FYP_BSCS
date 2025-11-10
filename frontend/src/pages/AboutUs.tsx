@@ -2,7 +2,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-
 const AboutUs: React.FC = () => {
   return (
     <div className="bg-black text-white min-h-screen flex flex-col">
@@ -22,20 +21,18 @@ const AboutUs: React.FC = () => {
       {/* About Content */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 sm:px-12 py-16 text-center space-y-8">
         <h2 className="text-3xl sm:text-4xl font-semibold text-amber-400 drop-shadow-lg">
-          Redefining Drone Delivery for a Smarter Future
+          Making Drone Delivery Simple and Reliable
         </h2>
 
         <p className="max-w-4xl text-gray-300 text-lg leading-relaxed">
           <span className="text-amber-400 font-semibold">AirGO</span> is a
-          next-generation drone delivery platform that combines Artificial
-          Intelligence, real-time optimization, and scalable architecture to
-          create the most reliable and efficient delivery network in the world.
+          platform that uses drones to deliver packages quickly and safely. 
+          Our system plans the best paths and keeps track of every delivery in real-time.
         </p>
 
         <p className="max-w-4xl text-gray-300 text-lg leading-relaxed">
-          We are dedicated to sustainability, precision, and innovation. Every
-          flight we make brings us closer to transforming logistics — enabling
-          faster, safer, and smarter deliveries to communities everywhere.
+          We focus on making deliveries easier, faster, and safer for everyone. 
+          Each flight helps us improve our service and reach more people with reliable deliveries.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 mt-10">
@@ -44,8 +41,7 @@ const AboutUs: React.FC = () => {
               Our Mission
             </h3>
             <p className="text-gray-300 text-base">
-              To revolutionize global logistics through autonomous drone
-              technology and intelligent delivery optimization.
+              To make delivery easier and faster using smart drones and simple technology.
             </p>
           </div>
 
@@ -54,26 +50,22 @@ const AboutUs: React.FC = () => {
               Our Vision
             </h3>
             <p className="text-gray-300 text-base">
-              To create a world where every delivery is faster, smarter, and
-              environmentally responsible.
+              To create a world where every delivery is quick, safe, and easy for everyone.
             </p>
           </div>
         </div>
-
-        
       </main>
 
       {/* Footer */}
-<footer className="bg-amber-500 text-black text-center py-6 font-medium">
-  <div className="space-x-4 mb-2">
-    <a href="/privacy-policy" className="hover:underline">Privacy Policy</a> |
-    <a href="/refund-policy" className="hover:underline">Return & Refund Policy</a> |
-    <a href="/service-policy">Service Policy</a> |
-    <a href="/terms" className="hover:underline">Terms & Conditions</a>
-  </div>
-  © {new Date().getFullYear()} AirGO. All rights reserved.
-</footer>
-
+      <footer className="bg-amber-500 text-black text-center py-6 font-medium">
+        <div className="space-x-4 mb-2">
+          <a href="/privacy-policy" className="hover:underline">Privacy Policy</a> |
+          <a href="/refund-policy" className="hover:underline">Return & Refund Policy</a> |
+          <a href="/service-policy">Service Policy</a> |
+          <a href="/terms" className="hover:underline">Terms & Conditions</a>
+        </div>
+        © {new Date().getFullYear()} AirGO. All rights reserved.
+      </footer>
     </div>
   );
 };

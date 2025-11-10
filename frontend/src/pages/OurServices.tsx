@@ -6,27 +6,19 @@ const OurServices: React.FC = () => {
   const services = [
     {
       title: "Smart Delivery Routing",
-      desc: "AI-powered algorithms plan efficient paths to minimize distance, avoid congestion, and reduce energy consumption.",
+      desc: "AI-powered algorithms plan efficient paths to minimize distance.",
     },
     {
       title: "Real-Time Drone Tracking",
-      desc: "Monitor your delivery’s journey live with intelligent tracking, status updates, and predictive arrival estimates.",
+      desc: "Monitor your delivery’s journey live with intelligent tracking, status updates.",
     },
     {
-      title: "Automated Dispatch System",
-      desc: "AI-driven dispatch automatically assigns drones based on load, weather, and route data to ensure flawless operations.",
+      title: "Ready to Grow",
+      desc: "Our system can handle more deliveries as your business grows.",
     },
     {
-      title: "Secure Package Handling",
-      desc: "Advanced sensors and stabilizers ensure the safety of every item — from fragile goods to critical medical supplies.",
-    },
-    {
-      title: "Global Scalability",
-      desc: "A modular system designed to scale globally, adapting to cities, terrain, and infrastructure with zero configuration.",
-    },
-    {
-      title: "Customer Insights Dashboard",
-      desc: "Our dashboard provides smart analytics and performance insights to help businesses monitor operations effectively.",
+      title: "Easy Business Reports",
+      desc: "See simple, clear reports to track how your deliveries are going.",
     },
   ];
 
@@ -57,21 +49,22 @@ const OurServices: React.FC = () => {
           systems ensure flawless performance in every mission.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl">
-          {services.map((service, index) => (
-            <div
-              key={index}
-              className="bg-gray-900 border border-amber-500 rounded-2xl p-8 shadow-lg transition-all duration-300 hover:bg-gray-800 hover:scale-105 hover:shadow-amber-500/30"
-            >
-              <h3 className="text-2xl font-bold text-amber-400 mb-3">
-                {service.title}
-              </h3>
-              <p className="text-gray-300 text-base leading-relaxed">
-                {service.desc}
-              </p>
-            </div>
-          ))}
-        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 max-w-6xl">
+  {services.map((service, index) => (
+    <div
+      key={index}
+      className="bg-gray-900 border border-amber-500 rounded-2xl p-8 shadow-lg transition-all duration-300 hover:bg-gray-800 hover:scale-105 hover:shadow-amber-500/30"
+    >
+      <h3 className="text-2xl font-bold text-amber-400 mb-3">
+        {service.title}
+      </h3>
+      <p className="text-gray-300 text-base leading-relaxed">
+        {service.desc}
+      </p>
+    </div>
+  ))}
+</div>
+
 
         
       </main>
