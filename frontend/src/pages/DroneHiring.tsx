@@ -40,7 +40,7 @@ const CardPayment: React.FC<{
   const [error, setError] = useState<string | null>(null);
 
   const handlePay = () => {
-    // ✅ Payment validation
+    // Payment validation
     if (cardNumber.length !== 16) return setError("Card number must be 16 digits.");
     if (!/^\d{2}\/\d{2}$/.test(expiry)) return setError("Expiry must be in MM/YY format.");
     if (parseInt(expiry.split("/")[0]) < 1 || parseInt(expiry.split("/")[0]) > 12)
@@ -227,7 +227,7 @@ const DroneHiring: React.FC = () => {
       const dist = calculateDistance(pickupCoords, dropoffCoords);
       if (dist > 0.05) {
         setDistance(dist);
-        const baseRate = 200;
+        const baseRate = 100;
         const perKmRate = 50;
         const totalCost = Math.round(baseRate + dist * perKmRate);
         setForm((p) => ({
@@ -255,7 +255,7 @@ const DroneHiring: React.FC = () => {
       const response = await axios.get(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(value)}`
       );
-      setDropoffSuggestions(response.data.slice(0, 5)); // top 5 suggestions
+      setDropoffSuggestions(response.data.slice(0, 5)); 
     } catch (err) {
       console.error(err);
       setDropoffSuggestions([]);
@@ -474,7 +474,7 @@ const DroneHiring: React.FC = () => {
 
             {isPaid && receipt && (
               <div className="p-4 border rounded-md text-green-700 bg-green-50 mt-4">
-                <h2 className="font-semibold">✅ Payment Successful</h2>
+                <h2 className="font-semibold">Payment Successful</h2>
                 <p>Receipt ID: {receipt.receiptId}</p>
                 <p>Amount Paid: ₨ {receipt.amount}</p>
                 <p>Date: {new Date(receipt.paidOn).toLocaleString()}</p>

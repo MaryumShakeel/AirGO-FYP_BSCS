@@ -70,7 +70,7 @@ const AdminPage: React.FC = () => {
         <div className="text-2xl font-bold text-amber-800">Admin</div>
 
         <button
-          onClick={() => window.location.href = "/dashboard"}
+          onClick={() => window.location.href = "/"}
           className="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-2 rounded-xl shadow-md transition-all"
         >
           Dashboard

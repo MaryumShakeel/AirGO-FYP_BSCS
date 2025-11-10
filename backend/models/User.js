@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
     dob: { type: String, required: true },
     educationLevel: { type: String, required: true },
 
-    // ✅ Addresses array
+    // Addresses array
     addresses: [addressSchema],
   },
   { timestamps: true }

@@ -62,19 +62,19 @@ router.post("/check-unique", async (req, res) => {
 // -------------------- Step 1: Send OTP --------------------
 router.post("/send-otp", async (req, res) => {
   try {
-    console.log("📩 /send-otp route hit!", req.body);
+    console.log("/send-otp route hit!", req.body);
 
     const { email } = req.body;
 
     if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      console.log("❌ Invalid email format:", email);
+      console.log("Invalid email format:", email);
       return res.status(400).json({ errors: { email: "Enter a valid email" } });
     }
 
     // check if already registered
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      console.log("⚠️ Email already registered:", email);
+      console.log("Email already registered:", email);
       return res.status(400).json({ errors: { email: "This email is already registered" } });
     }
 
@@ -82,24 +82,24 @@ router.post("/send-otp", async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     otpStore[email] = {
       otp,
-      expires: Date.now() + 5 * 60 * 1000, // 5 mins
+      expires: Date.now() + 60 * 1000, 
       verified: false,
     };
 
-    console.log(`📧 Generated OTP ${otp} for ${email}`);
+    console.log(`Generated OTP ${otp} for ${email}`);
 
     // send the email
     try {
       await sendOTPEmail(email, otp);
-      console.log(`✅ OTP email sent successfully to ${email}`);
-      return res.json({ message: "OTP sent successfully ✅" });
+      console.log(`OTP email sent successfully to ${email}`);
+      return res.json({ message: "OTP sent successfully" });
     } catch (emailErr) {
-      console.error("❌ Failed to send OTP email:", emailErr);
-      return res.status(500).json({ message: "Failed to send OTP ❌" });
+      console.error("Failed to send OTP email:", emailErr);
+      return res.status(500).json({ message: "Failed to send OTP" });
     }
   } catch (err) {
-    console.error("🔥 OTP Send Route Error:", err);
-    return res.status(500).json({ message: "Failed to send OTP ❌" });
+    console.error("OTP Send Route Error:", err);
+    return res.status(500).json({ message: "Failed to send OTP" });
   }
 });
 
@@ -119,10 +119,10 @@ router.post("/verify-otp", (req, res) => {
     if (record.otp !== otp) return res.status(400).json({ errors: { otp: "Invalid OTP" } });
 
     record.verified = true;
-    return res.json({ message: "OTP verified successfully ✅" });
+    return res.json({ message: "OTP verified successfully" });
   } catch (err) {
     console.error("Verify OTP Error:", err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Account exists on this email, try different email" });
   }
 });
 
@@ -143,26 +143,26 @@ router.post("/register", upload.single("cnicImage"), async (req, res) => {
       educationLevel,
     } = req.body;
 
-    // ✅ Field validation
+    // Field validation
     if (!email || !password || !fullName || !cnicNumber || !phone)
       return res.status(400).json({ message: "Missing required fields" });
 
-    // ✅ Prevent duplicate accounts
+    // Prevent duplicate accounts
     const existingUser = await User.findOne({ email });
     if (existingUser)
       return res.status(400).json({ message: "Email already registered" });
 
-    // ✅ Ensure OTP verified
+    // Ensure OTP verified
     const otpRecord = otpStore[email];
     if (!otpRecord || !otpRecord.verified)
       return res.status(400).json({
         message: "Please verify your email before registering",
       });
 
-    // ✅ Hash password
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ✅ Create and save new user
+    // Create and save new user
     const newUser = new User({
       fullName,
       fatherName,
@@ -180,10 +180,10 @@ router.post("/register", upload.single("cnicImage"), async (req, res) => {
 
     await newUser.save();
 
-    // ✅ Clean up OTP after success
+    // Clean up OTP after success
     delete otpStore[email];
 
-    console.log(`✅ New user registered: ${email}`);
+    console.log(`New user registered: ${email}`);
     res.status(201).json({ message: "🎉 Account created successfully!" });
   } catch (err) {
     console.error("Registration Error:", err);
@@ -205,10 +205,10 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || "secretkey", { expiresIn: "7d" });
 
-    return res.json({ message: "Login successful ✅", user, token });
+    return res.json({ message: "Login successful", user, token });
   } catch (err) {
     console.error("Login Error:", err);
-    return res.status(500).json({ message: "Server error ❌" });
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -268,7 +268,7 @@ router.get("/profile", verifyToken, async (req, res) => {
   }
 });
 
-// ✅ ADDRESSES CRUD
+// ADDRESSES CRUD
 
 // Get all addresses
 router.get("/addresses", verifyToken, async (req, res) => {
