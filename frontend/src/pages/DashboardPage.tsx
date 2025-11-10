@@ -9,6 +9,7 @@ export default function DashboardPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false); 
 
 
   useEffect(() => {
@@ -95,14 +96,47 @@ export default function DashboardPage() {
     {menuOpen ? "✕" : "☰"}
   </button>
 
+
+
   {/* Profile / avatar */}
+<div className="relative">
   <div
-    onClick={() => navigate("/profile")}
+    onClick={() => setProfileMenuOpen(!profileMenuOpen)}
     className="w-12 h-12 flex items-center justify-center rounded-full bg-transparent cursor-pointer hover:scale-110 transition-transform ml-4"
   >
     <User className="text-amber-600 w-9 h-9 hover:text-amber-700 transition-colors" />
   </div>
+
+  {/* Profile menu popup */}
+  {profileMenuOpen && (
+    <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+      <button
+        onClick={() => {
+          setProfileMenuOpen(false);
+          navigate("/profile"); // user
+        }}
+        className="w-full px-4 py-2 text-left hover:bg-amber-100 transition-colors rounded-t-lg"
+      >
+        User
+      </button>
+      <button
+        onClick={() => {
+          setProfileMenuOpen(false);
+          navigate("/admin"); // admin
+        }}
+        className="w-full px-4 py-2 text-left hover:bg-amber-100 transition-colors rounded-b-lg"
+      >
+        Admin
+      </button>
+    </div>
+  )}
+</div>
+
+
+
 </header>
+
+
 
 {/* Mobile dropdown menu (show on small screens) */}
 {menuOpen && (

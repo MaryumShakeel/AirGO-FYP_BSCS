@@ -31,7 +31,7 @@ export async function sendOTPEmail(to, otp) {
     console.log("OTP:", otp);
 
     const info = await transporter.sendMail({
-      from: `"AirGo Lost & Found" <${process.env.SMTP_EMAIL}>`,
+      from: `"AirGo" <${process.env.SMTP_EMAIL}>`,
       to,
       subject: "Your AirGo OTP Code",
       text: `Your OTP is: ${otp}. It is valid for 5 minutes.`,

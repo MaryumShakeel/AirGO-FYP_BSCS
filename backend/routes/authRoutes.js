@@ -346,5 +346,17 @@ router.delete("/addresses/:addressId", verifyToken, async (req, res) => {
 
 
 
+// -------------------- GET ALL REGISTERED USERS (for admin) --------------------
+router.get("/users", async (req, res) => {
+  try {
+    const users = await User.find().sort({ createdAt: -1 }); // newest first
+    res.json(users);
+  } catch (err) {
+    console.error("Fetch users error:", err);
+    res.status(500).json({ message: "Failed to fetch users." });
+  }
+});
+
+
 
 export default router;

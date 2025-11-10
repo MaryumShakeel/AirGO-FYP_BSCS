@@ -10,7 +10,7 @@ const OrderConfirmed: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-amber-200 via-amber-100 to-white text-gray-900 px-6">
-      {/* ✅ Confirmation Card */}
+      {/* Confirmation Card */}
       <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-10 max-w-md text-center transition-transform hover:scale-[1.02] duration-300">
         <div className="text-6xl mb-4 animate-bounce">✅</div>
         <h1 className="text-3xl font-extrabold text-amber-600 mb-3">

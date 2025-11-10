@@ -40,10 +40,17 @@ const CardPayment: React.FC<{
   const [error, setError] = useState<string | null>(null);
 
   const handlePay = () => {
+    // ✅ Payment validation
+    if (cardNumber.length !== 16) return setError("Card number must be 16 digits.");
+    if (!/^\d{2}\/\d{2}$/.test(expiry)) return setError("Expiry must be in MM/YY format.");
+    if (parseInt(expiry.split("/")[0]) < 1 || parseInt(expiry.split("/")[0]) > 12)
+      return setError("Expiry month must be between 01 and 12.");
+    if (cvc.length !== 3) return setError("CVC must be 3 digits.");
     if (!agree) {
       setError("You must agree to our Terms & Policies before paying.");
       return;
     }
+
     setError(null);
     setIsPaying(true);
 
@@ -85,7 +92,10 @@ const CardPayment: React.FC<{
           type="text"
           placeholder="Card number"
           value={cardNumber}
-          onChange={(e) => setCardNumber(e.target.value)}
+          onChange={(e) => {
+            const val = e.target.value.replace(/\D/g, ""); // only digits
+            if (val.length <= 16) setCardNumber(val);
+          }}
           className="p-2 border rounded-md w-full"
         />
         <div className="flex gap-3 mt-3">
@@ -93,14 +103,21 @@ const CardPayment: React.FC<{
             type="text"
             placeholder="MM/YY"
             value={expiry}
-            onChange={(e) => setExpiry(e.target.value)}
+            onChange={(e) => {
+              let val = e.target.value.replace(/[^\d/]/g, "");
+              if (val.length > 5) val = val.slice(0, 5);
+              setExpiry(val);
+            }}
             className="p-2 border rounded-md w-1/3"
           />
           <input
             type="text"
             placeholder="CVC"
             value={cvc}
-            onChange={(e) => setCvc(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, "");
+              if (val.length <= 3) setCvc(val);
+            }}
             className="p-2 border rounded-md w-1/3"
           />
           <input
@@ -226,19 +243,50 @@ const DroneHiring: React.FC = () => {
     setForm((p) => ({ ...p, [name]: value }));
   };
 
-  const submitOrder = async (receipt: any) => {
-  try {
-    // You can still send order to backend here if needed
-    console.log("Order submitted:", { ...form, receipt });
-    setToast("info", "Drone hire confirmed!");
 
-    // Navigate to OrderConfirmed page
-    navigate("/order-confirmed", { state: { receipt, form } });
-  } catch (err) {
-    setToast("error", "Failed to confirm order. Please try again.");
+
+
+  const handleDropoffInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const value = e.target.value;
+  setForm((p) => ({ ...p, dropoffAddress: value }));
+
+  if (value.length > 2) {
+    try {
+      const response = await axios.get(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(value)}`
+      );
+      setDropoffSuggestions(response.data.slice(0, 5)); // top 5 suggestions
+    } catch (err) {
+      console.error(err);
+      setDropoffSuggestions([]);
+    }
+  } else {
+    setDropoffSuggestions([]);
   }
 };
 
+
+
+
+
+
+  const submitOrder = async (receipt: any) => {
+    try {
+      console.log("Order submitted:", { ...form, receipt });
+      setToast("info", "Drone hire confirmed!");
+
+      navigate("/order-confirmed", {
+        state: {
+          receipt,
+          form,
+          pickupCoords: form.pickupCoords,
+          dropoffCoords: form.dropoffCoords,
+        },
+      });
+    } catch (err) {
+      setToast("error", "Failed to confirm order. Please try again.");
+    }
+  };
 
   const handlePaymentSuccess = (receipt: any) => {
     setReceipt(receipt);
@@ -282,6 +330,7 @@ const DroneHiring: React.FC = () => {
           </h1>
 
           <form className="space-y-8">
+            {/* Pickup Location */}
             <section>
               <h2 className="text-xl font-semibold mb-2 text-gray-800">Pickup Location</h2>
               <input
@@ -309,33 +358,63 @@ const DroneHiring: React.FC = () => {
               </MapContainer>
             </section>
 
-            <section>
-              <h2 className="text-xl font-semibold mb-2 text-gray-800">Drop-off Location</h2>
-              <input
-                type="text"
-                name="dropoffAddress"
-                value={form.dropoffAddress}
-                onChange={handleChange}
-                placeholder="Search or click on map"
-                className="w-full p-2 border rounded-md mb-2"
-              />
-              <MapContainer
-                center={form.dropoffCoords}
-                zoom={13}
-                style={{ height: "200px", borderRadius: "8px" }}
-              >
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <LocationMarker
-                  position={form.dropoffCoords}
-                  setCoords={(coords) =>
-                    setForm((p) => ({ ...p, dropoffCoords: coords }))
-                  }
-                />
-              </MapContainer>
-            </section>
+            {/* Drop-off Location */}
+            <section className="relative">
+  <h2 className="text-xl font-semibold mb-2 text-gray-800">Drop-off Location</h2>
+  
+  <input
+    type="text"
+    name="dropoffAddress"
+    value={form.dropoffAddress}
+    onChange={handleDropoffInputChange}
+    placeholder="Search or click on map"
+    className="w-full p-2 border rounded-md mb-2"
+    autoComplete="off"
+  />
 
+  {/* Suggestions Dropdown */}
+  {dropoffSuggestions.length > 0 && (
+    <ul className="absolute z-50 bg-white border rounded-md shadow-md w-full max-h-48 overflow-y-auto">
+      {dropoffSuggestions.map((s, idx) => (
+        <li
+          key={idx}
+          className="p-2 hover:bg-amber-100 cursor-pointer"
+          onClick={() => {
+            const coords: [number, number] = [parseFloat(s.lat), parseFloat(s.lon)];
+            setForm((p) => ({
+              ...p,
+              dropoffAddress: s.display_name,
+              dropoffCoords: coords,
+            }));
+            setDropoffSuggestions([]);
+          }}
+        >
+          {s.display_name}
+        </li>
+      ))}
+    </ul>
+  )}
+
+  <MapContainer
+    center={form.dropoffCoords}
+    zoom={13}
+    style={{ height: "200px", borderRadius: "8px" }}
+  >
+    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+    <LocationMarker
+      position={form.dropoffCoords}
+      setCoords={(coords) =>
+        setForm((p) => ({ ...p, dropoffCoords: coords }))
+      }
+    />
+  </MapContainer>
+</section>
+
+
+
+
+
+            {/* Distance / Fare */}
             {distance && (
               <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 bg-amber-50 p-4 rounded-md border border-amber-200">
                 <p className="text-gray-700 font-medium">
@@ -349,6 +428,7 @@ const DroneHiring: React.FC = () => {
               </section>
             )}
 
+            {/* Item Details */}
             <section>
               <h2 className="text-xl font-semibold mb-2 text-gray-800">Item Details</h2>
               <input
