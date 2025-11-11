@@ -145,9 +145,9 @@ export default function RegisterForm() {
       });
       setOtpSent(true);
       setOtpTimer(60);
-      setMessage(res.data.message || "OTP sent ✅");
+      setMessage(res.data.message || "OTP sent");
     } catch (err: any) {
-      setMessage(err.response?.data?.message || "Failed to send OTP ❌");
+      setMessage(err.response?.data?.message || "Failed to send OTP");
     } finally {
       setSendingOtp(false);
     }
@@ -163,9 +163,9 @@ export default function RegisterForm() {
         otp,
       });
       setEmailVerified(true);
-      setMessage("Email verified ✅");
+      setMessage("Email verified");
     } catch (err: any) {
-      setMessage("Invalid OTP ❌");
+      setMessage("Invalid OTP");
     } finally {
       setVerifyingOtp(false);
     }
@@ -197,10 +197,10 @@ export default function RegisterForm() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // ✅ Only change: navigate to login page
+      // Only change: navigate to login page
       navigate("/login");
     } catch (err: any) {
-      setMessage(err.response?.data?.message || "Registration failed ❌");
+      setMessage(err.response?.data?.message || "Registration failed");
     }
   };
 
@@ -288,7 +288,7 @@ export default function RegisterForm() {
       <p className="text-red-600 text-sm">{errors.password}</p>
     )}
 
-    {/* ✅ Confirm Password */}
+    {/* Confirm Password */}
     <div className="relative">
       <input
         type={showPassword ? "text" : "password"}
@@ -482,7 +482,7 @@ export default function RegisterForm() {
 
             {emailVerified && (
               <div className="text-green-700 mt-1 font-semibold">
-                Email verified ✅
+                Email verified
               </div>
             )}
 
