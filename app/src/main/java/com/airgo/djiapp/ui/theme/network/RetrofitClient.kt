@@ -21,4 +21,4 @@ object RetrofitClient {
 
 // Home: 192.168.100.11
 
-// Papa: 192.168.126.229
+// Papa: 192.168.36.229

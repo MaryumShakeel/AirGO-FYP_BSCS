@@ -44,7 +44,8 @@ fun ChangePasswordScreen(navController: NavController) {
 
     var message by remember { mutableStateOf("") }
 
-    val sessionManager = SessionManager(navController.context)
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val sessionManager = SessionManager(context)
     val userEmail = sessionManager.getLoggedInEmail() ?: ""
 
     Column(
@@ -166,6 +167,10 @@ fun ChangePasswordScreen(navController: NavController) {
                 /* UPDATE BUTTON */
                 Button(
                     onClick = {
+                        if (userEmail.isEmpty()) {
+                            message = "User not logged in"
+                            return@Button
+                        }
 
                         if (currentPassword.isBlank() || newPassword.isBlank() || confirmPassword.isBlank()) {
                             message = "Please fill all fields"

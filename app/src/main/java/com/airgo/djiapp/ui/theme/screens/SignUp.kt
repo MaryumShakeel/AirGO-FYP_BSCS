@@ -47,6 +47,7 @@ fun SignUpScreen(navController: NavController) {
     var step by remember { mutableStateOf(1) } // 1 = Identity, 2 = Security, 3 = Personal Details
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     // ---------------- Step 1: Basic Identity ----------------
     var username by remember { mutableStateOf("") }
@@ -283,7 +284,19 @@ fun SignUpScreen(navController: NavController) {
                     ) { Text("Back", fontWeight = FontWeight.Bold) }
 
                     Button(
-                        onClick = { if (password.length >= 8 && confirmPassword == password) step = 3 },
+                        onClick = {
+                            if (password.length < 8) {
+                                Toast.makeText(context, "Password must be at least 8 characters", Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
+
+                            if (confirmPassword != password) {
+                                Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
+
+                            step = 3
+                        },
                         shape = RoundedCornerShape(14.dp),
                         modifier = Modifier.height(55.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA000))

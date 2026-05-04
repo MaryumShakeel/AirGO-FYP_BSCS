@@ -13,6 +13,12 @@ import dji.sdk.products.Aircraft
 import dji.sdk.sdkmanager.DJISDKManager
 import org.osmdroid.util.GeoPoint
 import dji.common.flightcontroller.FlightControllerState
+import android.os.Handler
+import android.os.Looper
+import dji.common.flightcontroller.virtualstick.FlightControlData
+import dji.common.error.DJIError
+import dji.common.flightcontroller.virtualstick.*
+
 
 object DroneMissionManager {
 
@@ -187,4 +193,69 @@ object DroneMissionManager {
             }
         }
     }
+
+
+// ================= JOYSTICK MODE =================
+
+    private val joystickHandler = Handler(Looper.getMainLooper())
+    private var isJoystickRunning = false
+
+    fun startJoystickMode(
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val fc = flightController ?: return onError("No FlightController")
+
+        fc.setVirtualStickModeEnabled(true) { err: DJIError? ->
+            if (err != null) {
+                onError(err.description)
+                return@setVirtualStickModeEnabled
+            }
+
+            // ✅ REQUIRED CONFIG
+            fc.setRollPitchControlMode(RollPitchControlMode.VELOCITY)
+            fc.setYawControlMode(YawControlMode.ANGULAR_VELOCITY)
+            fc.setVerticalControlMode(VerticalControlMode.VELOCITY)
+            fc.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY)
+
+            fc.startTakeoff { takeoffErr: DJIError? ->
+                if (takeoffErr != null) {
+                    onError(takeoffErr.description)
+                    return@startTakeoff
+                }
+
+                isJoystickRunning = true
+                startJoystickLoop()
+                onSuccess()
+            }
+        }
+    }
+
+    private fun startJoystickLoop() {
+        joystickHandler.post(object : Runnable {
+            override fun run() {
+
+                if (!isJoystickRunning) return
+
+                val data = FlightControlData(
+                    0f,
+                    0f,
+                    0f,
+                    0.05f
+                )
+
+                flightController?.sendVirtualStickFlightControlData(data, null)
+
+                joystickHandler.postDelayed(this, 100)
+            }
+        })
+    }
+
+    fun stopJoystickMode() {
+        isJoystickRunning = false
+        flightController?.setVirtualStickModeEnabled(false, null)
+    }
+
+
 }
+

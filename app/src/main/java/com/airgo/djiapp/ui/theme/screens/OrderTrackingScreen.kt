@@ -29,7 +29,78 @@ import com.airgo.djiapp.ui.theme.map.DroneMissionManager
 import com.airgo.djiapp.ui.theme.ai.DroneFrameSender
 import kotlinx.coroutines.delay
 import android.util.Log
+import androidx.compose.ui.text.font.FontWeight
 
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DeliveryInfoCard(
+    pickupAddress: String,
+    dropAddress: String,
+    distanceKm: Double,
+    estimatedTime: Int,
+    deliveryCost: Int
+) {
+    val amber = Color(0xFFFFA000)
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFEDE3C7)),
+        elevation = CardDefaults.cardElevation(8.dp)
+    ) {
+        Column(modifier = Modifier.padding(18.dp)) {
+
+            Text(
+                text = "Drone Delivering Package",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = "Pickup:",
+                color = amber,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = pickupAddress,
+                color = Color.Black
+            )
+
+
+            Text(
+                text = "Drop-off:",
+                color = amber,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = dropAddress,
+                color = Color.Black
+            )
+
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row {
+                Text("Distance:", color = amber, fontWeight = FontWeight.Bold)
+                Text(" %.2f km  ".format(distanceKm), color = Color.Black)
+
+                Text("Time:", color = amber, fontWeight = FontWeight.Bold)
+                Text(" $estimatedTime min  ", color = Color.Black)
+
+                Text("Fare:", color = amber, fontWeight = FontWeight.Bold)
+                Text(" PKR $deliveryCost", color = Color.Black)
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,6 +169,7 @@ fun OrderTrackingScreen(
 
     DisposableEffect(Unit) {
         onDispose {
+            DroneMissionManager.stopJoystickMode()
             DroneFrameSender.stopStreaming()
         }
     }
@@ -108,7 +180,7 @@ fun OrderTrackingScreen(
             reachedPickup = true
 
             scope.launch {
-                snackbarHostState.showSnackbar("📦 Drone reached pickup. Please load item")
+                snackbarHostState.showSnackbar("📦 Please make the package ready")
             }
 
             DroneMissionManager.pauseMission()
@@ -143,7 +215,7 @@ fun OrderTrackingScreen(
                 snackbarHostState.showSnackbar("📦 Please collect your package")
             }
 
-            // ✅ RETURN TO HOME
+            // RETURN TO HOME
             DroneMissionManager.returnToHome()
         }
     }
@@ -163,6 +235,37 @@ fun OrderTrackingScreen(
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = amber)
                     }
                 },
+                actions = {
+                    Card(
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(40.dp),
+                        shape = RoundedCornerShape(50),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(6.dp)
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            TextButton(
+                                onClick = {
+                                    navController.navigate("home") {
+                                        popUpTo("orderTracking") { inclusive = true }
+                                    }
+                                },
+                                contentPadding = PaddingValues(0.dp)
+                            ) {
+                                Text(
+                                    text = "Exit",
+                                    color = amber,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFFFF8E1))
             )
         }
@@ -173,44 +276,6 @@ fun OrderTrackingScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-
-            if (isDroneConnected) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F5E9)),
-                        shape = RoundedCornerShape(50)
-                    ) {
-                        Text(
-                            text = "🟢 Drone Connected",
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            color = Color(0xFF2E7D32)
-                        )
-                    }
-                }
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE)),
-                        shape = RoundedCornerShape(50)
-                    ) {
-                        Text(
-                            text = "🔴 Drone Disconnected",
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            color = Color(0xFFC62828)
-                        )
-                    }
-                }
-            }
 
 
             Box(
@@ -252,6 +317,60 @@ fun OrderTrackingScreen(
                         map.invalidate()
                     }
                 )
+
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    contentAlignment = Alignment.TopCenter
+                )
+                {
+                    if (isDroneConnected) {
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F5E9)),
+                            shape = RoundedCornerShape(50)
+                        ) {
+                            Text(
+                                text = "🟢 Drone Connected",
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                color = Color(0xFF2E7D32)
+                            )
+                        }
+                    }
+                    else
+                    {
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE)),
+                            shape = RoundedCornerShape(50)
+                        ) {
+                            Text(
+                                text = "🔴 Drone Disconnected",
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                color = Color(0xFFC62828)
+                            )
+                        }
+                    }
+                }
+
+
+                // ✅ Delivery Info Card (BOTTOM OVERLAY)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 16.dp),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    DeliveryInfoCard(
+                        pickupAddress = pickupAddress,
+                        dropAddress = dropAddress,
+                        distanceKm = distanceKm,
+                        estimatedTime = estimatedTime,
+                        deliveryCost = deliveryCost
+                    )
+                }
+
+
             }
 
             if (!missionStarted) {
@@ -261,45 +380,24 @@ fun OrderTrackingScreen(
 
                         isStartingMission = true
 
-                        val mission = DroneMissionManager.createMission(route)
-                        if (route.isEmpty()) return@Button
-
-                        DroneMissionManager.uploadMission(
-                            mission,
+                        DroneMissionManager.startJoystickMode(
                             onSuccess = {
+                                missionStarted = true
+                                isStartingMission = false
 
-                                DroneMissionManager.startTakeoff(
-                                    onSuccess = {
-
-                                        scope.launch {
-                                            kotlinx.coroutines.delay(3000) // ✅ force correct usage
-
-                                            DroneMissionManager.startMission(
-                                                onSuccess = {
-                                                    missionStarted = true
-                                                    isStartingMission = false
-
-                                                    scope.launch {
-                                                        snackbarHostState.showSnackbar("🚁 Order is out for delivery")
-                                                    }                                                },
-                                                onError = {
-                                                    isStartingMission = false
-                                                }
-                                            )
-                                        }
-
-                                    },
-                                    onError = {
-                                        isStartingMission = false
-                                    }
-                                )
-
-
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("🚁 Drone is hovering")
+                                }
                             },
-                            onError = { isStartingMission = false }
+                            onError = {
+                                isStartingMission = false
+                            }
                         )
                     },
-                    enabled = isDroneConnected && route.isNotEmpty() && !isStartingMission,
+
+
+
+                    enabled = isDroneConnected && !isStartingMission,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
@@ -324,24 +422,36 @@ fun OrderTrackingScreen(
                         Modifier.padding(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("✅ Delivery Completed!")
+                        Text("Delivery Completed!")
                         Spacer(Modifier.height(8.dp))
                         Text("Drone is returning to home")
 
                         Spacer(Modifier.height(16.dp))
 
-                        Button(onClick = { navController.navigate("history") }) {
-                            Text("View Order History")
+                        Button(
+                            onClick = { navController.navigate("history") },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFBF24)),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("View Order History", color = Color.White, fontWeight = FontWeight.Bold)
                         }
 
                         Spacer(Modifier.height(8.dp))
 
-                        OutlinedButton(onClick = { navController.navigate("home") }) {
-                            Text("Back to Home")
+                        Button(
+                            onClick = { navController.navigate("home") },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFBF24)),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Back to Home", color = Color.White, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
             }
+
+
         }
     }
 }
