@@ -26,10 +26,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
 import androidx.navigation.NavController
 import com.airgo.djiapp.R
+import androidx.compose.material.icons.filled.Notifications
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
+
 
     val gradientBackground = Brush.verticalGradient(
         colors = listOf(Color(0xFFFFF9E0), Color(0xFFFFF3B0))
@@ -47,6 +49,7 @@ fun HomeScreen(navController: NavController) {
                                     fontWeight = FontWeight.Bold
                                 )
                             ) { append("Air") }
+
                             withStyle(
                                 style = SpanStyle(
                                     color = Color(0xFFF59E0B),
@@ -62,11 +65,28 @@ fun HomeScreen(navController: NavController) {
                         fontSize = 24.sp
                     )
                 },
+
+                actions = {
+                    IconButton(
+                        onClick = {
+                            navController.navigate("notifications")
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = "Notifications",
+                            tint = Color(0xFFF59E0B)
+                        )
+                    }
+                },
+
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.White
                 )
             )
+
         },
+
         bottomBar = {
             NavigationBar(containerColor = Color.White) {
 

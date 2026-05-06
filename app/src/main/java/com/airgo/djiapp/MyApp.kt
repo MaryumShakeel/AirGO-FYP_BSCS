@@ -14,8 +14,7 @@ import com.airgo.djiapp.ui.theme.screens.ProfileScreen
 import com.airgo.djiapp.ui.theme.screens.OrderTrackingScreen
 import com.airgo.djiapp.ui.theme.screens.HistoryScreen
 import com.airgo.djiapp.ui.theme.screens.ChangePasswordScreen
-
-
+import com.airgo.djiapp.ui.theme.screens.NotificationsScreen
 
 @Composable
 fun MyApp(navController: NavHostController) {
@@ -33,6 +32,7 @@ fun MyApp(navController: NavHostController) {
         composable("profile") { ProfileScreen(navController) }
         composable("changePassword") { ChangePasswordScreen(navController) }
         composable("history") { HistoryScreen(navController) }
+        composable("notifications") { NotificationsScreen(navController) }
 
 
         // Updated orderTracking route with all parameters

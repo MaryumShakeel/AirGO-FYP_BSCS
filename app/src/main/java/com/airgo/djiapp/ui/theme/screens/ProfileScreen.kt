@@ -66,14 +66,16 @@ fun ProfileScreen(
     var updateMessage by remember { mutableStateOf("") }
     var isUpdating by remember { mutableStateOf(false) }
 
-    // Load profile safely
+    // Loading profile
     LaunchedEffect(userEmail) {
-        if (userEmail.isNotEmpty()) {
+        if (!userEmail.isNullOrEmpty()) {
             try {
                 profileViewModel.loadProfile(userEmail)
-            } catch (_: Exception) {
-                profileViewModel.setError("Unable to load profile. Showing local data.")
+            } catch (e: Exception) {
+                profileViewModel.setError("Failed to load profile")
             }
+        } else {
+            profileViewModel.setError("No user logged in")
         }
     }
 
@@ -104,9 +106,15 @@ fun ProfileScreen(
             }
         }
 
-        if (errorMessage.isNotEmpty()) {
+        val cleanError = when {
+            errorMessage.contains("404") -> "Profile not found. Please login again."
+            errorMessage.contains("HTTP") -> "Network error. Try again."
+            else -> errorMessage
+        }
+
+        if (cleanError.isNotEmpty()) {
             Spacer(modifier = Modifier.height(8.dp))
-            Text(errorMessage, color = Color.Red, fontWeight = FontWeight.Medium)
+            Text(cleanError, color = Color.Red, fontWeight = FontWeight.Medium)
         }
 
         /* ---------------- PROFILE HEADER ---------------- */

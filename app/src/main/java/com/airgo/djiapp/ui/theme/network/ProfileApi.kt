@@ -34,7 +34,7 @@ interface ProfileApi {
     companion object {
         fun create(): ProfileApi {
             val retrofit = Retrofit.Builder()
-                .baseUrl("http://192.168.100.11:5000/api/") // your backend URL
+                .baseUrl("http://192.168.100.11:5000/api/") // Backend URL
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
             return retrofit.create(ProfileApi::class.java)
